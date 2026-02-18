@@ -8,6 +8,15 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 def get_db():
     db = SessionLocal()
     try:
@@ -64,4 +73,5 @@ def reject_tree(tree_id: int, db: Session = Depends(get_db)):
 @app.get("/finance/")
 def get_finance(db: Session = Depends(get_db)):
     return db.query(models.Finance).all()
+
 
