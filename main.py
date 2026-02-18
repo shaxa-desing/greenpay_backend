@@ -1,3 +1,4 @@
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine
@@ -63,3 +64,4 @@ def reject_tree(tree_id: int, db: Session = Depends(get_db)):
 @app.get("/finance/")
 def get_finance(db: Session = Depends(get_db)):
     return db.query(models.Finance).all()
+
