@@ -4,6 +4,10 @@ from sqlalchemy.orm import Session
 from database import SessionLocal, engine
 import models, schemas
 
+from fastapi.staticfiles import StaticFiles
+
+app.mount("/", StaticFiles(directory="static", html=True), name="static")
+
 models.Base.metadata.drop_all(bind=engine)
 models.Base.metadata.create_all(bind=engine)
 
@@ -74,6 +78,7 @@ def reject_tree(tree_id: int, db: Session = Depends(get_db)):
 @app.get("/finance/")
 def get_finance(db: Session = Depends(get_db)):
     return db.query(models.Finance).all()
+
 
 
 
