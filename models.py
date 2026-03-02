@@ -5,9 +5,10 @@ class Tree(Base):
     __tablename__ = "trees"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer)
-    user_name = Column(String)
     tree_type = Column(String)
+    location = Column(String)
     latitude = Column(Float)
     longitude = Column(Float)
+    user_name = Column(String)
+    user_id = Column(Integer)
     status = Column(String, default="pending")
