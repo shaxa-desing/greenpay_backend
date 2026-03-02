@@ -1,13 +1,12 @@
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, Depends
-from sqlalchemy.orm import Session
-from database import SessionLocal, engine
-import models, schemas
-
-models.Base.metadata.drop_all(bind=engine)
-models.Base.metadata.create_all(bind=engine)
+from fastapi import FastAPI
+from database import engine, Base
+from models import *
+from crud import *
+from schemas import *
 
 app = FastAPI()
+
+Base.metadata.create_all(bind=engine)
 
 app.add_middleware(
     CORSMiddleware,
@@ -83,6 +82,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get("/")
 def read_index():
     return FileResponse("static/index.html")
+
 
 
 
