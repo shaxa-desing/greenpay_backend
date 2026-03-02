@@ -75,6 +75,14 @@ def reject_tree(tree_id: int, db: Session = Depends(get_db)):
 def get_finance(db: Session = Depends(get_db)):
     return db.query(models.Finance).all()
 
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/")
+def read_index():
+    return FileResponse("static/index.html")
 
 
 
