@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>GreenPay Admin</title>
+</head>
+<body>
+
+<h2>GreenPay Admin Dashboard</h2>
+
+<table border="1" id="treeTable">
+<tr>
+<th>ID</th>
+<th>User</th>
+<th>Tree</th>
+<th>Lat</th>
+<th>Lng</th>
+<th>Status</th>
+</tr>
+</table>
+
+<script>
+const API_URL = "https://greenpaybackend-production.up.railway.app";
+
+async function loadTrees(){
+const res = await fetch(`${API_URL}/trees/`);
+const data = await res.json();
+
+let table = document.getElementById("treeTable");
+
+data.forEach(tree=>{
+table.innerHTML += `
+<tr>
+<td>${tree.id}</td>
+<td>${tree.user_name}</td>
+<td>${tree.tree_type}</td>
+<td>${tree.latitude}</td>
+<td>${tree.longitude}</td>
+<td>${tree.status}</td>
+</tr>
+`
+})
+}
+
+loadTrees();
+</script>
+
+</body>
+</html>
