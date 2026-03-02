@@ -1,8 +1,11 @@
-from fastapi import FastAPI
-from database import engine, Base
-from models import *
-from crud import *
-from schemas import *
+from fastapi import FastAPI, Depends
+from sqlalchemy.orm import Session
+from database import SessionLocal, engine
+import models
+import schemas
+import crud
+
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
@@ -82,6 +85,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get("/")
 def read_index():
     return FileResponse("static/index.html")
+
 
 
 
