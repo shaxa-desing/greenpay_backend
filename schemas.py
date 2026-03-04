@@ -1,16 +1,13 @@
 from pydantic import BaseModel
 
-class TreeCreate(BaseModel):
+class Tree(BaseModel):
     user_id: int
     user_name: str
+    phone: str
     tree_type: str
-    location: str   # 🔥 SHU YO‘Q EDI
     latitude: float
     longitude: float
+    photo: str
 
-
-class FinanceCreate(BaseModel):
-    type: str
-    amount: float
-    description: str
-
+    class Config:
+        orm_mode = True
