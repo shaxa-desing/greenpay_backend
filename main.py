@@ -1,30 +1,38 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.responses import HTMLResponse
-from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
+import models
+import schemas
+import crud
+
+from database import SessionLocal, engine, Base
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-trees = []
 
-class Tree(BaseModel):
-    user_id: int
-    user_name: str
-    phone: str
-    tree_type: str
-    latitude: float
-    longitude: float
-    photo: str
+def get_db():
+
+    db = SessionLocal()
+
+    try:
+        yield db
+    finally:
+        db.close()
 
 
 @app.post("/trees/")
-def create_tree(tree: Tree):
-    trees.append(tree)
-    return {"status": "saved"}
+def create_tree(tree: schemas.Tree, db: Session = Depends(get_db)):
+
+    return crud.create_tree(db, tree)
 
 
 @app.get("/trees/")
-def get_trees():
-    return trees
+def get_trees(db: Session = Depends(get_db)):
+
+    return crud.get_trees(db)
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -49,11 +57,13 @@ def dashboard():
         data.forEach(tree => {
 
             html += `
-            <div style="border:1px solid black;padding:10px;margin:10px">
+            <div style="border:1px solid #ccc;padding:10px;margin:10px">
 
             <b>User:</b> ${tree.user_name}<br>
             <b>Telefon:</b> ${tree.phone}<br>
             <b>Daraxt:</b> ${tree.tree_type}<br>
+
+            <img src="https://api.telegram.org/file/botTOKEN/${tree.photo}" width="200"/><br>
 
             <a href="https://maps.google.com/?q=${tree.latitude},${tree.longitude}" target="_blank">
             📍 Xarita
