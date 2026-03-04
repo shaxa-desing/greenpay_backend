@@ -1,56 +1,70 @@
+from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
+from pydantic import BaseModel
+
+app = FastAPI()
+
+trees = []
+
+class Tree(BaseModel):
+    user_id: int
+    user_name: str
+    phone: str
+    tree_type: str
+    latitude: float
+    longitude: float
+    photo: str
+
+
+@app.post("/trees/")
+def create_tree(tree: Tree):
+    trees.append(tree)
+    return {"status": "saved"}
+
+
+@app.get("/trees/")
+def get_trees():
+    return trees
 
 
 @app.get("/", response_class=HTMLResponse)
 def dashboard():
 
-    html = """
-    <html>
-    <head>
-        <title>GreenPay Dashboard</title>
-    </head>
+    return """
+    <h1>🌳 GreenPay Dashboard</h1>
 
-    <body style="font-family:Arial">
+    <button onclick="loadTrees()">Daraxtlarni yuklash</button>
 
-        <h1>🌳 GreenPay Dashboard</h1>
+    <div id="trees"></div>
 
-        <button onclick="loadTrees()">Daraxtlarni yuklash</button>
+    <script>
 
-        <div id="trees"></div>
+    async function loadTrees(){
 
-        <script>
+        const res = await fetch('/trees/')
+        const data = await res.json()
 
-        async function loadTrees(){
+        let html = ""
 
-            const res = await fetch("/trees/")
-            const data = await res.json()
+        data.forEach(tree => {
 
-            let html = ""
+            html += `
+            <div style="border:1px solid black;padding:10px;margin:10px">
 
-            data.forEach(tree => {
+            <b>User:</b> ${tree.user_name}<br>
+            <b>Telefon:</b> ${tree.phone}<br>
+            <b>Daraxt:</b> ${tree.tree_type}<br>
 
-                html += `
-                <div style="border:1px solid #ccc;padding:10px;margin:10px">
+            <a href="https://maps.google.com/?q=${tree.latitude},${tree.longitude}" target="_blank">
+            📍 Xarita
+            </a>
 
-                <b>User:</b> ${tree.user_name}<br>
-                <b>Telefon:</b> ${tree.phone}<br>
-                <b>Daraxt:</b> ${tree.tree_type}<br>
+            </div>
+            `
+        })
 
-                <a href="https://maps.google.com/?q=${tree.latitude},${tree.longitude}" target="_blank">
-                📍 Xarita
-                </a>
+        document.getElementById("trees").innerHTML = html
+    }
 
-                </div>
-                `
-            })
-
-            document.getElementById("trees").innerHTML = html
-        }
-
-        </script>
-
-    </body>
-    </html>
+    </script>
     """
-
-    return html
