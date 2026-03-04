@@ -9,7 +9,7 @@ import crud
 
 from database import SessionLocal, engine, Base
 
-BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN"
+BOT_TOKEN = "8565818987:AAEciIAbwHVGjkuJ7TwwdCfKjKlXYj8annI"
 
 # Database table yaratish
 Base.metadata.create_all(bind=engine)
@@ -153,3 +153,4 @@ document.getElementById("trees").innerHTML = html
 </body>
 </html>
 """
+
