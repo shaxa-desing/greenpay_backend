@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 import models
 import schemas
 
+
 def create_tree(db: Session, tree: schemas.Tree):
 
     db_tree = models.Tree(**tree.dict())
