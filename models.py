@@ -4,7 +4,7 @@ from database import Base
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(BigInteger, unique=True, index=True) # Telegram ID uchun
+    user_id = Column(BigInteger, unique=True, index=True)
     full_name = Column(String)
     username = Column(String, nullable=True)
     phone = Column(String, nullable=True)
@@ -14,7 +14,7 @@ class Tree(Base):
     __tablename__ = "trees"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(BigInteger)
-    user_name = Column(String) # Dashboardda ism chiqishi uchun
+    user_name = Column(String)
     phone = Column(String, nullable=True)
     tree_type = Column(String)
     latitude = Column(Float)
