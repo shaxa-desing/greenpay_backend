@@ -9,6 +9,16 @@ import crud
 
 from database import SessionLocal, engine, Base
 
+
+BOT_TOKEN = "8565818987:AAEciIAbwHVGjkuJ7TwwdCfKjKlXYj8annI"
+
+
+
+# Database table yaratish
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI()
+
 app = FastAPI()
 
 # Foydalanuvchini ID orqali olish (Botdagi shaxsiy kabinet uchun)
@@ -44,14 +54,6 @@ def update_payment(data: schemas.PaymentUpdate, db: Session = Depends(database.g
     
     db.commit()
     return {"message": "Ma'lumotlar yangilandi"}
-
-BOT_TOKEN = "8565818987:AAEciIAbwHVGjkuJ7TwwdCfKjKlXYj8annI"
-
-# Database table yaratish
-Base.metadata.create_all(bind=engine)
-
-app = FastAPI()
-
 
 def get_db():
     db = SessionLocal()
@@ -189,5 +191,6 @@ document.getElementById("trees").innerHTML = html
 </body>
 </html>
 """
+
 
 
