@@ -1,22 +1,30 @@
 from fastapi import FastAPI, Depends, HTTPException, Response
 from fastapi.responses import HTMLResponse
+from sqlalchemy import Column, Integer, String, Float, BigInteger, ForeignKey
 from sqlalchemy.orm import Session
 import database, models, schemas, crud, requests
+from typing import Optional
 
 app = FastAPI(title="GreenPay API")
 
-# Ma'lumotlar bazasi jadvallarini yaratish
+# Ma'lumotlar bazasini yaratish
 models.Base.metadata.create_all(bind=database.engine)
 
 BOT_TOKEN = "8565818987:AAEciIAbwHVGjkuJ7TwwdCfKjKlXYj8annI"
 
 # ----------------------------------------------------------------
-# API ENDPOINTS (Bot va Dashboard uchun)
+# API ENDPOINTS
 # ----------------------------------------------------------------
+
+@app.get("/users-list/")
+def get_users_list(search: str = None, db: Session = Depends(database.get_db)):
+    query = db.query(models.User)
+    if search:
+        query = query.filter(models.User.full_name.contains(search))
+    return query.all()
 
 @app.get("/user/{user_id}")
 def get_user(user_id: int, db: Session = Depends(database.get_db)):
-    """Foydalanuvchi ma'lumotlarini olish (Shaxsiy kabinet uchun)"""
     user = db.query(models.User).filter(models.User.user_id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="Foydalanuvchi topilmadi")
@@ -27,49 +35,23 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(database.get_db)
     db_user = db.query(models.User).filter(models.User.user_id == user.user_id).first()
     if db_user:
         return db_user
-    
-    # schemas.UserCreate dagi 'user_name' ni models.User dagi 'full_name' ga o'giramiz
     new_user = models.User(
         user_id=user.user_id, 
-        full_name=user.user_name  # user.user_name deb yozilganiga e'tibor bering
+        full_name=user.user_name,
+        username=user.username,
+        phone=user.phone
     )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
     return new_user
 
-@app.get("/users-list/")
-def get_users_list(search: str = None, db: Session = Depends(database.get_db)):
-    query = db.query(models.User)
-    if search:
-        # Ism bo'yicha qidirish (full_name ustunidan)
-        query = query.filter(models.User.full_name.contains(search))
-    return query.all()
-
-@app.post("/trees/")
-def create_tree(tree: schemas.Tree, db: Session = Depends(database.get_db)):
-    """Botdan kelgan yangi daraxt ma'lumotlarini saqlash"""
-    return crud.create_tree(db, tree)
-
 @app.get("/trees/")
 def get_trees(db: Session = Depends(database.get_db)):
-    """Barcha daraxtlarni dashboard uchun olish"""
-    return crud.get_trees(db)
-
-@app.post("/update_payment/")
-def update_payment(data: schemas.PaymentUpdate, db: Session = Depends(database.get_db)):
-    """Foydalanuvchi to'lov ma'lumotlarini yangilash"""
-    user = db.query(models.User).filter(models.User.user_id == data.user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="Foydalanuvchi topilmadi")
-    if data.card: user.card = data.card
-    if data.phone_pay: user.phone_pay = data.phone_pay
-    db.commit()
-    return {"status": "success", "message": "Ma'lumotlar yangilandi"}
+    return db.query(models.Tree).all()
 
 @app.get("/photo/{file_id}")
 def get_photo(file_id: str):
-    """Telegram file_id orqali rasmni dashboardda ko'rsatish"""
     try:
         url = f"https://api.telegram.org/bot{BOT_TOKEN}/getFile?file_id={file_id}"
         r = requests.get(url).json()
@@ -77,11 +59,11 @@ def get_photo(file_id: str):
         file_url = f"https://api.telegram.org/file/bot{BOT_TOKEN}/{file_path}"
         img = requests.get(file_url)
         return Response(content=img.content, media_type="image/jpeg")
-    except Exception:
-        raise HTTPException(status_code=404, detail="Rasm yuklashda xatolik")
+    except:
+        raise HTTPException(status_code=404)
 
 # ----------------------------------------------------------------
-# DASHBOARD (Chiroyli interfeys)
+# DASHBOARD (HTML)
 # ----------------------------------------------------------------
 
 @app.get("/", response_class=HTMLResponse)
@@ -93,126 +75,95 @@ def dashboard():
         <meta charset="UTF-8">
         <title>GreenPay Admin Panel</title>
         <style>
-            :root { --primary: #2ecc71; --secondary: #3498db; --bg: #f4f7f6; }
-            body { font-family: sans-serif; background: var(--bg); margin: 0; padding: 20px; }
-            .container { max-width: 1100px; margin: 0 auto; }
-            .controls { display: flex; gap: 10px; margin-bottom: 20px; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-            input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
-            button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; color: white; background: var(--primary); font-weight: bold; }
-            .tabs { margin-bottom: 20px; }
-            .tab-btn { background: #ddd; color: #333; margin-right: 5px; }
-            .tab-btn.active { background: var(--secondary); color: white; }
-            table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; }
+            :root { --primary: #2ecc71; --dark: #2c3e50; --bg: #f8f9fa; }
+            body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 20px; }
+            .container { max-width: 1200px; margin: 0 auto; }
+            .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+            .nav { margin-bottom: 20px; }
+            .nav button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 5px; margin-right: 10px; background: #ddd; }
+            .nav button.active { background: var(--primary); color: white; }
+            .search-box { margin-bottom: 20px; display: flex; gap: 10px; }
+            input { padding: 10px; border: 1px solid #ccc; border-radius: 5px; flex: 1; }
+            table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
             th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
-            th { background: #f8f9fa; }
-            .user-card { background: white; padding: 10px; border-radius: 8px; margin-bottom: 5px; border-left: 5px solid var(--primary); }
+            th { background: #f4f4f4; }
+            img { width: 60px; border-radius: 5px; }
+            .btn-map { color: #3498db; text-decoration: none; font-weight: bold; }
         </style>
     </head>
     <body>
         <div class="container">
-            <h1>🌳 GreenPay Boshqaruv Paneli</h1>
+            <div class="header"><h1>🌳 GreenPay Dashboard</h1></div>
             
-            <div class="tabs">
-                <button class="tab-btn active" onclick="switchTab('trees')">🌲 Daraxtlar</button>
-                <button class="tab-btn" onclick="switchTab('users')">👤 Foydalanuvchilar</button>
+            <div class="nav">
+                <button id="btnTrees" class="active" onclick="switchTab('trees')">🌲 Daraxtlar</button>
+                <button id="btnUsers" onclick="switchTab('users')">👤 Foydalanuvchilar</button>
             </div>
 
-            <div class="controls">
-                <input type="text" id="searchInput" placeholder="Ism yoki ma'lumot qidirish...">
-                <button onclick="performSearch()">🔍 Qidirish</button>
-                <button style="background:#95a5a6" onclick="resetView()">🔄 Yangilash</button>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Qidirish...">
+                <button onclick="loadData()">🔍 Qidirish</button>
             </div>
 
-            <div id="content">
-                </div>
+            <div id="table-container">
+                <table id="dataTable">
+                    <thead><tr id="tableHead"></tr></thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
         </div>
 
         <script>
             let currentTab = 'trees';
 
-            async function loadData(search = '') {
-                const content = document.getElementById("content");
+            async function loadData() {
+                const search = document.getElementById('searchInput').value;
                 const url = currentTab === 'trees' ? '/trees/' : `/users-list/?search=${search}`;
+                const res = await fetch(url);
+                const data = await res.json();
                 
-                try {
-                    const res = await fetch(url);
-                    const data = await res.json();
-                    renderData(data);
-                } catch (err) {
-                    content.innerHTML = "<p style='color:red'>Ma'lumot yuklashda xato!</p>";
-                }
-            }
-
-            function renderData(data) {
-                const content = document.getElementById("content");
-                if (data.length === 0) { content.innerHTML = "<p>Ma'lumot topilmadi.</p>"; return; }
+                const head = document.getElementById('tableHead');
+                const body = document.getElementById('tableBody');
+                body.innerHTML = '';
 
                 if (currentTab === 'trees') {
-                    content.innerHTML = "<table><tr><th>Foydalanuvchi</th><th>Daraxt turi</th><th>Rasm</th></tr>" + 
-                        data.map(t => `<tr><td>${t.user_name}</td><td>${t.tree_type}</td><td><a href="/photo/${t.photo}" target="_blank">Ko'rish</a></td></tr>`).join('') + "</table>";
+                    head.innerHTML = '<th>Foydalanuvchi</th><th>Daraxt turi</th><th>Rasm</th><th>Xarita</th>';
+                    data.forEach(t => {
+                        body.innerHTML += `
+                            <tr>
+                                <td><b>${t.user_name || 'Noma'lum'}</b><br><small>${t.phone || ''}</small></td>
+                                <td>${t.tree_type}</td>
+                                <td><img src="/photo/${t.photo}"></td>
+                                <td>
+                                    <a href="https://www.google.com/maps?q=${t.latitude},${t.longitude}" target="_blank" class="btn-map">
+                                        📍 Xaritada ko'rish
+                                    </a>
+                                </td>
+                            </tr>`;
+                    });
                 } else {
-                    content.innerHTML = "<table><tr><th>ID</th><th>FMI</th><th>Karta</th><th>Telefon</th></tr>" + 
-                        data.map(u => `<tr><td>${u.user_id}</td><td><b>${u.full_name}</b></td><td>${u.card || '—'}</td><td>${u.phone_pay || '—'}</td></tr>`).join('') + "</table>";
+                    head.innerHTML = '<th>FMI</th><th>Username</th><th>Telefon</th><th>Karta</th>';
+                    data.forEach(u => {
+                        body.innerHTML += `
+                            <tr>
+                                <td><b>${u.full_name}</b></td>
+                                <td>${u.username || '—'}</td>
+                                <td>${u.phone || '—'}</td>
+                                <td>${u.card || '—'}</td>
+                            </tr>`;
+                    });
                 }
             }
 
             function switchTab(tab) {
                 currentTab = tab;
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                event.target.classList.add('active');
-                loadData();
-            }
-
-            function performSearch() {
-                const query = document.getElementById("searchInput").value;
-                loadData(query);
-            }
-
-            function resetView() {
-                document.getElementById("searchInput").value = '';
+                document.getElementById('btnTrees').classList.toggle('active', tab === 'trees');
+                document.getElementById('btnUsers').classList.toggle('active', tab === 'users');
                 loadData();
             }
 
             window.onload = loadData;
-            <script>
-    function renderData(data) {
-        const content = document.getElementById("content");
-        if (currentTab === 'trees') {
-            content.innerHTML = `
-            <table>
-                <tr>
-                    <th>Foydalanuvchi</th>
-                    <th>Daraxt</th>
-                    <th>Rasm</th>
-                    <th>Xarita</th>
-                </tr>
-                ${data.map(t => `
-                <tr>
-                    <td><b>${t.user_name}</b><br><small>${t.phone}</small></td>
-                    <td>${t.tree_type}</td>
-                    <td><img src="/photo/${t.photo}" style="width:50px; cursor:pointer" onclick="window.open(this.src)"></td>
-                    <td><a href="https://www.google.com/maps?q=${t.latitude},${t.longitude}" target="_blank">📍 Joylashuv</a></td>
-                </tr>`).join('')}
-            </table>`;
-        } else {
-            content.innerHTML = `
-            <table>
-                <tr>
-                    <th>FMI</th>
-                    <th>Username</th>
-                    <th>Telefon</th>
-                </tr>
-                ${data.map(u => `
-                <tr>
-                    <td>${u.full_name}</td>
-                    <td><a href="https://t.me/${u.username?.replace('@','')}" target="_blank">${u.username || '—'}</a></td>
-                    <td>${u.phone || '—'}</td>
-                </tr>`).join('')}
-            </table>`;
-        }
-    }
         </script>
     </body>
     </html>
     """
-
