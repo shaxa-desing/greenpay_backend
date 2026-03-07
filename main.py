@@ -22,14 +22,15 @@ def create_tree(tree: schemas.Tree, db: Session = Depends(database.get_db)):
 def get_trees(db: Session = Depends(database.get_db)):
     return crud.get_trees(db)
 
-@app.post("/users/")
+@app.post("/users")
 def create_user(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
+    # Baza modelida 'user_id' mavjudligini tekshiring
     db_user = db.query(models.User).filter(models.User.user_id == user.user_id).first()
     if db_user:
         return db_user
-    new_user = models.User(user_id=user.user_id, user_name=user.user_name)
+    new_user = models.User(user_id=user.user_id, full_name=user.user_name)
     db.add(new_user)
-    db.commit()
+    db.commit() # BU QATOR JUDA MUHIM
     db.refresh(new_user)
     return new_user
 
@@ -93,3 +94,4 @@ def dashboard():
     </body>
     </html>
     """
+
