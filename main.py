@@ -40,10 +40,19 @@ def get_users_list(search: str = None, db: Session = Depends(database.get_db)):
 
 @app.post("/trees/")
 def create_tree(tree: schemas.TreeCreate, db: Session = Depends(database.get_db)):
-    new_tree = models.Tree(**tree.dict())
+    # models.Tree da user_name qatori borligiga ishonch hosil qiling
+    new_tree = models.Tree(
+        user_id=tree.user_id,
+        user_name=tree.user_name, # Shu joyi muhim
+        tree_type=tree.tree_type,
+        latitude=tree.latitude,
+        longitude=tree.longitude,
+        photo=tree.photo,
+        status="pending"
+    )
     db.add(new_tree)
     db.commit()
-    return {"message": "Daraxt muvaffaqiyatli saqlandi!"}
+    return {"message": "Success"}
 
 @app.get("/trees/")
 def get_trees(db: Session = Depends(database.get_db)):
@@ -142,4 +151,5 @@ def dashboard():
     </body>
     </html>
     """
+
 
