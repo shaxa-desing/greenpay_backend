@@ -17,7 +17,9 @@ class Tree(Base):
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, unique=True, index=True) # Telegram ID
+    user_id = Column(BigInteger, unique=True, index=True)
     full_name = Column(String)
+    username = Column(String, nullable=True) # @username uchun
+    phone = Column(String, nullable=True)
     card = Column(String, nullable=True)
-    phone_pay = Column(String, nullable=True)
+
