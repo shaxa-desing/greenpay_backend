@@ -25,9 +25,13 @@ def get_users_list(search: str = None, db: Session = Depends(database.get_db)):
 
 @app.get("/user/{user_id}")
 def get_user(user_id: int, db: Session = Depends(database.get_db)):
+    print(f"Qidirilayotgan ID: {user_id}") # Loglarda ID ko'rinishi kerak
     user = db.query(models.User).filter(models.User.user_id == user_id).first()
+    
     if not user:
+        print("Foydalanuvchi bazada topilmadi!") # Buni loglarda tekshiring
         raise HTTPException(status_code=404, detail="Foydalanuvchi topilmadi")
+        
     return user
 
 @app.post("/users/")
@@ -167,3 +171,4 @@ def dashboard():
     </body>
     </html>
     """
+
