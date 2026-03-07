@@ -8,17 +8,14 @@ class User(Base):
     full_name = Column(String)
     username = Column(String, nullable=True)
     phone = Column(String, nullable=True)
-    card = Column(String, nullable=True)
 
 class Tree(Base):
     __tablename__ = "trees"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(BigInteger)
     user_name = Column(String)
-    phone = Column(String, nullable=True)
     tree_type = Column(String)
     latitude = Column(Float)
     longitude = Column(Float)
     photo = Column(String)
-    # SHU QATORNI QO'SHING:
-    status = Column(String, default="pending")
+    status = Column(String, default="pending") # Tasdiqlash uchun
