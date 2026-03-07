@@ -14,21 +14,22 @@ BOT_TOKEN = "8565818987:AAEciIAbwHVGjkuJ7TwwdCfKjKlXYj8annI"
 
 
 # Database table yaratish
-Base.metadata.create_all(bind=engine)
+models.Base.metadata.create_all(bind=database.engine)
 
-app = FastAPI()
+@app.post("/trees", response_model=schemas.Tree)
+def create_tree(tree: schemas.Tree, db: Session = Depends(database.get_db)):
+    db_tree = models.Tree(**tree.dict())
+    db.add(db_tree)
+    db.commit()
+    db.refresh(db_tree)
+    return db_tree
 
-app = FastAPI()
-
-# Foydalanuvchini ID orqali olish (Botdagi shaxsiy kabinet uchun)
 @app.get("/user/{user_id}")
 def read_user(user_id: int, db: Session = Depends(database.get_db)):
     user = db.query(models.User).filter(models.User.user_id == user_id).first()
     if not user:
-        # 404 qaytarish o'rniga, bot "topilmadi" deb xabar bersin
         raise HTTPException(status_code=404, detail="Foydalanuvchi topilmadi")
     return user
-
 # Foydalanuvchini ro'yxatdan o'tkazish (Daraxt yuborganda chaqiriladi)
 @app.post("/users")
 def create_user(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
@@ -190,6 +191,7 @@ document.getElementById("trees").innerHTML = html
 </body>
 </html>
 """
+
 
 
 
