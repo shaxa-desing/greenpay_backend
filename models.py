@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Column, Integer, String, Float, BigInteger
 from database import Base
 
 # Daraxtlar uchun model (mavjud)
@@ -14,12 +14,13 @@ class Tree(Base):
     photo = Column(String)
 
 # YANGI: Foydalanuvchilar uchun model
+
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(BigInteger, unique=True, index=True)
+    user_id = Column(BigInteger, unique=True, index=True) # Endi xato bermaydi
     full_name = Column(String)
-    username = Column(String, nullable=True) # @username uchun
+    username = Column(String, nullable=True)
     phone = Column(String, nullable=True)
     card = Column(String, nullable=True)
 
