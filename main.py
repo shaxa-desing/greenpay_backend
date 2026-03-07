@@ -36,15 +36,11 @@ def get_user(user_id: int, db: Session = Depends(database.get_db)):
 
 @app.post("/users/")
 def create_user(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
+    print(f"DEBUG: Kelgan ma'lumot -> ID: {user.user_id}, Name: {user.user_name}") # <--- SHUNI QO'SHING
     db_user = db.query(models.User).filter(models.User.user_id == user.user_id).first()
     if db_user:
         return db_user
-    new_user = models.User(
-        user_id=user.user_id, 
-        full_name=user.user_name,
-        username=user.username,
-        phone=user.phone
-    )
+    new_user = models.User(user_id=user.user_id, full_name=user.user_name, username=user.username, phone=user.phone)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -171,4 +167,5 @@ def dashboard():
     </body>
     </html>
     """
+
 
