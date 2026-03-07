@@ -1,6 +1,27 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.responses import HTMLResponse, Response
 from sqlalchemy.orm import Session
+import database, models, schemas
+
+app = FastAPI()
+
+# Baza jadvalini yaratish (agar kerak bo'lsa)
+models.Base.metadata.create_all(bind=database.engine)
+
+@app.post("/trees", response_model=schemas.Tree)
+def create_tree(tree: schemas.Tree, db: Session = Depends(database.get_db)):
+    db_tree = models.Tree(**tree.dict())
+    db.add(db_tree)
+    db.commit()
+    db.refresh(db_tree)
+    return db_tree
+
+@app.get("/user/{user_id}")
+def read_user(user_id: int, db: Session = Depends(database.get_db)):
+    user = db.query(models.User).filter(models.User.user_id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Foydalanuvchi topilmadi")
+    return user
 import requests
 
 import database 
@@ -191,6 +212,7 @@ document.getElementById("trees").innerHTML = html
 </body>
 </html>
 """
+
 
 
 
