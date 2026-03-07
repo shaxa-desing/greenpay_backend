@@ -1,4 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, Response
+# HTMLResponse ni shu yerga qo'shing:
+from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 import database, models, schemas, crud, requests
 
@@ -205,6 +207,7 @@ document.getElementById("trees").innerHTML = html
 </body>
 </html>
 """
+
 
 
 
