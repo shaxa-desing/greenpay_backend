@@ -20,3 +20,5 @@ class Tree(Base):
     latitude = Column(Float)
     longitude = Column(Float)
     photo = Column(String)
+    # SHU QATORNI QO'SHING:
+    status = Column(String, default="pending")
