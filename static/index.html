@@ -1,49 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>GreenPay Admin</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .card { background: white; padding: 15px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        img { width: 100%; height: 200px; object-fit: cover; border-radius: 10px; }
+        .map-link { display: block; margin-top: 10px; color: #007bff; text-decoration: none; font-weight: bold; }
+    </style>
 </head>
 <body>
-
-<h2>GreenPay Admin Dashboard</h2>
-
-<table border="1" id="treeTable">
-<tr>
-<th>ID</th>
-<th>User</th>
-<th>Tree</th>
-<th>Lat</th>
-<th>Lng</th>
-<th>Status</th>
-</tr>
-</table>
-
-<script>
-const API_URL = "https://greenpaybackend-production.up.railway.app";
-
-async function loadTrees(){
-const res = await fetch(`${API_URL}/trees/`);
-const data = await res.json();
-
-let table = document.getElementById("treeTable");
-
-data.forEach(tree=>{
-table.innerHTML += `
-<tr>
-<td>${tree.id}</td>
-<td>${tree.user_name}</td>
-<td>${tree.tree_type}</td>
-<td>${tree.latitude}</td>
-<td>${tree.longitude}</td>
-<td>${tree.status}</td>
-</tr>
-`
-})
-}
-
-loadTrees();
-</script>
-
+    <h1>🌳 GreenPay Dashboard</h1>
+    <div class="grid" id="trees"></div>
+    <script>
+        async function loadTrees() {
+            const res = await fetch('/trees/');
+            const data = await res.json();
+            const container = document.getElementById('trees');
+            data.forEach(t => {
+                container.innerHTML += `
+                    <div class="card">
+                        <h3>${t.tree_type}</h3>
+                        <p>👤 ${t.user_name} | 📱 ${t.phone}</p>
+                        <img src="/photo/${t.photo}" alt="tree">
+                        <a class="map-link" href="https://maps.google.com/?q=${t.latitude},${t.longitude}" target="_blank">📍 Xaritada ko'rish</a>
+                    </div>`;
+            });
+        }
+        loadTrees();
+    </script>
 </body>
 </html>
