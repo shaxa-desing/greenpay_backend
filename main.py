@@ -174,7 +174,45 @@ def dashboard():
             }
 
             window.onload = loadData;
+            <script>
+    function renderData(data) {
+        const content = document.getElementById("content");
+        if (currentTab === 'trees') {
+            content.innerHTML = `
+            <table>
+                <tr>
+                    <th>Foydalanuvchi</th>
+                    <th>Daraxt</th>
+                    <th>Rasm</th>
+                    <th>Xarita</th>
+                </tr>
+                ${data.map(t => `
+                <tr>
+                    <td><b>${t.user_name}</b><br><small>${t.phone}</small></td>
+                    <td>${t.tree_type}</td>
+                    <td><img src="/photo/${t.photo}" style="width:50px; cursor:pointer" onclick="window.open(this.src)"></td>
+                    <td><a href="https://www.google.com/maps?q=${t.latitude},${t.longitude}" target="_blank">📍 Joylashuv</a></td>
+                </tr>`).join('')}
+            </table>`;
+        } else {
+            content.innerHTML = `
+            <table>
+                <tr>
+                    <th>FMI</th>
+                    <th>Username</th>
+                    <th>Telefon</th>
+                </tr>
+                ${data.map(u => `
+                <tr>
+                    <td>${u.full_name}</td>
+                    <td><a href="https://t.me/${u.username?.replace('@','')}" target="_blank">${u.username || '—'}</a></td>
+                    <td>${u.phone || '—'}</td>
+                </tr>`).join('')}
+            </table>`;
+        }
+    }
         </script>
     </body>
     </html>
     """
+
