@@ -14,8 +14,7 @@ class Tree(BaseModel):
 class UserCreate(BaseModel):
     user_id: int
     user_name: str
-    phone: str
-
+    
 class PaymentUpdate(BaseModel):
     user_id: int
     card: Optional[str] = None
@@ -23,3 +22,4 @@ class PaymentUpdate(BaseModel):
 
     class Config:
         from_attributes = True
+
