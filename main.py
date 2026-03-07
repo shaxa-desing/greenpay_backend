@@ -1,33 +1,26 @@
-from fastapi import FastAPI, Depends, HTTPException
-from fastapi.responses import HTMLResponse, Response
+from fastapi import FastAPI, Depends, HTTPException, Response
 from sqlalchemy.orm import Session
-import database, models, schemas
+import database, models, schemas, crud, requests
 
 app = FastAPI()
-
-# Baza jadvalini yaratish (agar kerak bo'lsa)
 models.Base.metadata.create_all(bind=database.engine)
 
-@app.post("/trees", response_model=schemas.Tree)
+@app.post("/trees/")
 def create_tree(tree: schemas.Tree, db: Session = Depends(database.get_db)):
-    db_tree = models.Tree(**tree.dict())
-    db.add(db_tree)
-    db.commit()
-    db.refresh(db_tree)
-    return db_tree
+    return crud.create_tree(db, tree)
 
-@app.get("/user/{user_id}")
-def read_user(user_id: int, db: Session = Depends(database.get_db)):
-    user = db.query(models.User).filter(models.User.user_id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="Foydalanuvchi topilmadi")
-    return user
-import requests
+@app.get("/trees/")
+def get_trees(db: Session = Depends(database.get_db)):
+    return crud.get_trees(db)
 
-import database 
-import models
-import schemas
-from database import SessionLocal, engine, Base
+@app.get("/photo/{file_id}")
+def get_photo(file_id: str):
+    # Telegramdan rasmni olish logikasi
+    url = f"https://api.telegram.org/botYOUR_BOT_TOKEN/getFile?file_id={file_id}"
+    r = requests.get(url).json()
+    file_path = r["result"]["file_path"]
+    img = requests.get(f"https://api.telegram.org/file/botYOUR_BOT_TOKEN/{file_path}")
+    return Response(content=img.content, media_type="image/jpeg")
 
 
 BOT_TOKEN = "8565818987:AAEciIAbwHVGjkuJ7TwwdCfKjKlXYj8annI"
@@ -212,6 +205,7 @@ document.getElementById("trees").innerHTML = html
 </body>
 </html>
 """
+
 
 
 
