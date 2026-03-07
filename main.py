@@ -75,65 +75,43 @@ def dashboard():
         <meta charset="UTF-8">
         <title>GreenPay Admin Panel</title>
         <style>
-            :root { --primary: #2ecc71; --dark: #2c3e50; --bg: #f8f9fa; }
-            body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 20px; }
-            .container { max-width: 1200px; margin: 0 auto; }
-            .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-            .nav { margin-bottom: 20px; }
-            .nav button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 5px; margin-right: 10px; background: #ddd; }
-            .nav button.active { background: var(--primary); color: white; }
-            .search-box { margin-bottom: 20px; display: flex; gap: 10px; }
-            input { padding: 10px; border: 1px solid #ccc; border-radius: 5px; flex: 1; }
-            table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-            th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
-            th { background: #f4f4f4; }
-            img { width: 60px; border-radius: 5px; }
+            body { font-family: sans-serif; background: #f4f7f6; padding: 20px; }
+            .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+            th { background: #2ecc71; color: white; }
             .btn-map { color: #3498db; text-decoration: none; font-weight: bold; }
         </style>
     </head>
     <body>
         <div class="container">
-            <div class="header"><h1>🌳 GreenPay Dashboard</h1></div>
-            
-            <div class="nav">
-                <button id="btnTrees" class="active" onclick="switchTab('trees')">🌲 Daraxtlar</button>
-                <button id="btnUsers" onclick="switchTab('users')">👤 Foydalanuvchilar</button>
-            </div>
+            <h1>🌳 GreenPay Boshqaruv Paneli</h1>
+            <button onclick="switchTab('trees')">🌲 Daraxtlar</button>
+            <button onclick="switchTab('users')">👤 Foydalanuvchilar</button>
 
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Qidirish...">
-                <button onclick="loadData()">🔍 Qidirish</button>
-            </div>
-
-            <div id="table-container">
-                <table id="dataTable">
-                    <thead><tr id="tableHead"></tr></thead>
-                    <tbody id="tableBody"></tbody>
-                </table>
-            </div>
+            <table id="dataTable">
+                <thead><tr id="tableHead"></tr></thead>
+                <tbody id="tableBody"></tbody>
+            </table>
         </div>
 
         <script>
             let currentTab = 'trees';
 
             async function loadData() {
-                const search = document.getElementById('searchInput').value;
-                const url = currentTab === 'trees' ? '/trees/' : `/users-list/?search=${search}`;
-                const res = await fetch(url);
+                const res = await fetch(currentTab === 'trees' ? '/trees/' : '/users-list/');
                 const data = await res.json();
-                
                 const head = document.getElementById('tableHead');
                 const body = document.getElementById('tableBody');
                 body.innerHTML = '';
 
                 if (currentTab === 'trees') {
-                    head.innerHTML = '<th>Foydalanuvchi</th><th>Daraxt turi</th><th>Rasm</th><th>Xarita</th>';
+                    head.innerHTML = '<th>Foydalanuvchi</th><th>Daraxt</th><th>Xarita</th>';
                     data.forEach(t => {
                         body.innerHTML += `
                             <tr>
-                                <td><b>${t.user_name || 'Noma'lum'}</b><br><small>${t.phone || ''}</small></td>
+                                <td><b>${t.user_name || 'Noma\'lum'}</b><br><small>${t.phone || ''}</small></td>
                                 <td>${t.tree_type}</td>
-                                <td><img src="/photo/${t.photo}"></td>
                                 <td>
                                     <a href="https://www.google.com/maps?q=${t.latitude},${t.longitude}" target="_blank" class="btn-map">
                                         📍 Xaritada ko'rish
@@ -142,30 +120,22 @@ def dashboard():
                             </tr>`;
                     });
                 } else {
-                    head.innerHTML = '<th>FMI</th><th>Username</th><th>Telefon</th><th>Karta</th>';
+                    head.innerHTML = '<th>ID</th><th>FMI</th><th>Username</th><th>Telefon</th>';
                     data.forEach(u => {
                         body.innerHTML += `
                             <tr>
-                                <td><b>${u.full_name}</b></td>
-                                <td>${u.username || '—'}</td>
-                                <td>${u.phone || '—'}</td>
-                                <td>${u.card || '—'}</td>
+                                <td>${u.user_id}</td>
+                                <td>${u.full_name}</td>
+                                <td>${u.username || '-'}</td>
+                                <td>${u.phone || '-'}</td>
                             </tr>`;
                     });
                 }
             }
 
-            function switchTab(tab) {
-                currentTab = tab;
-                document.getElementById('btnTrees').classList.toggle('active', tab === 'trees');
-                document.getElementById('btnUsers').classList.toggle('active', tab === 'users');
-                loadData();
-            }
-
+            function switchTab(tab) { currentTab = tab; loadData(); }
             window.onload = loadData;
         </script>
     </body>
     </html>
     """
-
-
