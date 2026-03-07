@@ -3,10 +3,9 @@ from fastapi.responses import HTMLResponse, Response
 from sqlalchemy.orm import Session
 import requests
 
+import database 
 import models
 import schemas
-import crud
-
 from database import SessionLocal, engine, Base
 
 
@@ -191,6 +190,7 @@ document.getElementById("trees").innerHTML = html
 </body>
 </html>
 """
+
 
 
 
