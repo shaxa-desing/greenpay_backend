@@ -1,19 +1,20 @@
 from pydantic import BaseModel
 from typing import Optional
 
+class UserCreate(BaseModel):
+    user_id: int
+    user_name: str
+    username: Optional[str] = None
+    phone: str
+
 class Tree(BaseModel):
     user_id: int
+    user_name: str # Dashboardda null chiqmasligi uchun shart
+    phone: str
     tree_type: str
     latitude: float
     longitude: float
     photo: str
-
-    class Config:
-        from_attributes = True
-
-class UserCreate(BaseModel):
-    user_id: int
-    user_name: str
     
 class PaymentUpdate(BaseModel):
     user_id: int
@@ -22,4 +23,5 @@ class PaymentUpdate(BaseModel):
 
     class Config:
         from_attributes = True
+
 
