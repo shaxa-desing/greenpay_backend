@@ -22,4 +22,5 @@ class PaymentUpdate(BaseModel):
     phone_pay: Optional[str] = None
 
     class Config:
-        from_attributes = True # Pydantic v2 da "orm_mode" o'rniga shu ishlatiladi
+        from_attributes = Tree # Pydantic v2 da "orm_mode" o'rniga shu ishlatiladi
+
