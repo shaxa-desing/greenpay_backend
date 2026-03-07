@@ -130,7 +130,16 @@ def dashboard():
                 loadData();
             }
             window.onload = loadData;
+            // Qidiruv funksiyasi
+            function filterTable() {
+                const input = document.getElementById('searchInput').value.toLowerCase();
+                const rows = document.querySelectorAll('#tableBody tr');
+                rows.forEach(row => {
+                    row.style.display = row.innerText.toLowerCase().includes(input) ? '' : 'none';
+                });
+            }
         </script>
     </body>
     </html>
     """
+
