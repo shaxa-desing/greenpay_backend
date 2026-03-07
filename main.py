@@ -38,6 +38,14 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(database.get_db)
     db.refresh(new_user)
     return new_user
 
+@app.get("/users-list/")
+def get_users_list(search: str = None, db: Session = Depends(database.get_db)):
+    query = db.query(models.User)
+    if search:
+        # Ism bo'yicha qidirish (full_name ustunidan)
+        query = query.filter(models.User.full_name.contains(search))
+    return query.all()
+
 @app.post("/trees/")
 def create_tree(tree: schemas.Tree, db: Session = Depends(database.get_db)):
     """Botdan kelgan yangi daraxt ma'lumotlarini saqlash"""
@@ -83,69 +91,90 @@ def dashboard():
     <html lang="uz">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>GreenPay Dashboard</title>
+        <title>GreenPay Admin Panel</title>
         <style>
-            :root { --primary: #2ecc71; --dark: #2c3e50; --bg: #f8f9fa; }
-            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: var(--dark); }
-            .container { max-width: 1200px; margin: 0 auto; }
-            header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid var(--primary); padding-bottom: 10px; }
-            h1 { color: var(--primary); margin: 0; font-size: 28px; }
-            .btn-refresh { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-            .btn-refresh:hover { background: #27ae60; transform: scale(1.05); }
-            #trees-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
-            .card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: 0.3s; position: relative; }
-            .card:hover { transform: translateY(-5px); }
-            .card img { width: 100%; height: 200px; object-fit: cover; background: #eee; }
-            .card-body { padding: 15px; }
-            .user-name { font-weight: bold; font-size: 18px; margin-bottom: 5px; color: var(--dark); }
-            .tree-type { color: var(--primary); font-weight: 600; margin-bottom: 10px; }
-            .info { font-size: 14px; color: #666; margin-bottom: 15px; }
-            .btn-map { display: block; text-align: center; background: #3498db; color: white; text-decoration: none; padding: 8px; border-radius: 5px; font-size: 14px; transition: 0.3s; }
-            .btn-map:hover { background: #2980b9; }
-            .loading { text-align: center; font-size: 18px; color: #999; margin-top: 50px; }
+            :root { --primary: #2ecc71; --secondary: #3498db; --bg: #f4f7f6; }
+            body { font-family: sans-serif; background: var(--bg); margin: 0; padding: 20px; }
+            .container { max-width: 1100px; margin: 0 auto; }
+            .controls { display: flex; gap: 10px; margin-bottom: 20px; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+            input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+            button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; color: white; background: var(--primary); font-weight: bold; }
+            .tabs { margin-bottom: 20px; }
+            .tab-btn { background: #ddd; color: #333; margin-right: 5px; }
+            .tab-btn.active { background: var(--secondary); color: white; }
+            table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; }
+            th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+            th { background: #f8f9fa; }
+            .user-card { background: white; padding: 10px; border-radius: 8px; margin-bottom: 5px; border-left: 5px solid var(--primary); }
         </style>
     </head>
     <body>
         <div class="container">
-            <header>
-                <h1>🌳 GreenPay Dashboard</h1>
-                <button class="btn-refresh" onclick="loadTrees()">🔄 Yangilash</button>
-            </header>
-            <div id="trees-grid"><p class="loading">Daraxtlar yuklanmoqda...</p></div>
+            <h1>🌳 GreenPay Boshqaruv Paneli</h1>
+            
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('trees')">🌲 Daraxtlar</button>
+                <button class="tab-btn" onclick="switchTab('users')">👤 Foydalanuvchilar</button>
+            </div>
+
+            <div class="controls">
+                <input type="text" id="searchInput" placeholder="Ism yoki ma'lumot qidirish...">
+                <button onclick="performSearch()">🔍 Qidirish</button>
+                <button style="background:#95a5a6" onclick="resetView()">🔄 Yangilash</button>
+            </div>
+
+            <div id="content">
+                </div>
         </div>
 
         <script>
-            async function loadTrees() {
-                const grid = document.getElementById("trees-grid");
-                try {
-                    const res = await fetch('/trees/');
-                    const data = await res.json();
-                    
-                    if (data.length === 0) {
-                        grid.innerHTML = '<p class="loading">Hozircha daraxtlar yo'q.</p>';
-                        return;
-                    }
+            let currentTab = 'trees';
 
-                    grid.innerHTML = data.map(t => `
-                        <div class="card">
-                            <img src="/photo/${t.photo}" alt="Daraxt rasmi">
-                            <div class="card-body">
-                                <div class="user-name">${t.user_name}</div>
-                                <div class="tree-type">🌲 ${t.tree_type}</div>
-                                <div class="info">📍 Koordinata: ${t.latitude.toFixed(4)}, ${t.longitude.toFixed(4)}</div>
-                                <a href="https://www.google.com/maps?q=${t.latitude},${t.longitude}" target="_blank" class="btn-map">🗺️ Xaritada ko'rish</a>
-                            </div>
-                        </div>
-                    `).join('');
+            async function loadData(search = '') {
+                const content = document.getElementById("content");
+                const url = currentTab === 'trees' ? '/trees/' : `/users-list/?search=${search}`;
+                
+                try {
+                    const res = await fetch(url);
+                    const data = await res.json();
+                    renderData(data);
                 } catch (err) {
-                    grid.innerHTML = '<p class="loading" style="color:red;">Xatolik yuz berdi!</p>';
+                    content.innerHTML = "<p style='color:red'>Ma'lumot yuklashda xato!</p>";
                 }
             }
-            // Sahifa yuklanganda ma'lumotlarni olish
-            window.onload = loadTrees;
+
+            function renderData(data) {
+                const content = document.getElementById("content");
+                if (data.length === 0) { content.innerHTML = "<p>Ma'lumot topilmadi.</p>"; return; }
+
+                if (currentTab === 'trees') {
+                    content.innerHTML = "<table><tr><th>Foydalanuvchi</th><th>Daraxt turi</th><th>Rasm</th></tr>" + 
+                        data.map(t => `<tr><td>${t.user_name}</td><td>${t.tree_type}</td><td><a href="/photo/${t.photo}" target="_blank">Ko'rish</a></td></tr>`).join('') + "</table>";
+                } else {
+                    content.innerHTML = "<table><tr><th>ID</th><th>FMI</th><th>Karta</th><th>Telefon</th></tr>" + 
+                        data.map(u => `<tr><td>${u.user_id}</td><td><b>${u.full_name}</b></td><td>${u.card || '—'}</td><td>${u.phone_pay || '—'}</td></tr>`).join('') + "</table>";
+                }
+            }
+
+            function switchTab(tab) {
+                currentTab = tab;
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                event.target.classList.add('active');
+                loadData();
+            }
+
+            function performSearch() {
+                const query = document.getElementById("searchInput").value;
+                loadData(query);
+            }
+
+            function resetView() {
+                document.getElementById("searchInput").value = '';
+                loadData();
+            }
+
+            window.onload = loadData;
         </script>
     </body>
     </html>
     """
-
