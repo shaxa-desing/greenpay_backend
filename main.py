@@ -4,13 +4,9 @@ from sqlalchemy.orm import Session
 import database, models, schemas, requests
 
 app = FastAPI(title="GreenPay API")
-
-# Ma'lumotlar bazasini yaratish
 models.Base.metadata.create_all(bind=database.engine)
 
 BOT_TOKEN = "8565818987:AAEciIAbwHVGjkuJ7TwwdCfKjKlXYj8annI"
-
-# --- API ENDPOINTS ---
 
 @app.post("/users/")
 def create_user(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
@@ -65,7 +61,6 @@ def get_photo(file_id: str):
     except:
         raise HTTPException(status_code=404)
 
-# --- DASHBOARD (HTML) ---
 @app.get("/", response_class=HTMLResponse)
 def dashboard():
     return """
