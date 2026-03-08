@@ -8,6 +8,17 @@ models.Base.metadata.create_all(bind=database.engine)
 
 BOT_TOKEN = "8565818987:AAEciIAbwHVGjkuJ7TwwdCfKjKlXYj8annI"
 
+@app.post("/update-card/{user_id}")
+def update_user_card(user_id: int, data: dict, db: Session = Depends(database.get_db)):
+    user = db.query(models.User).filter(models.User.user_id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    user.card = data.get("card")
+    user.phone = data.get("phone") # Agar telefonni yangilamoqchi bo'lsangiz
+    db.commit()
+    return {"message": "Card updated successfully"}
+
 @app.post("/users/")
 def create_user(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
     db_user = db.query(models.User).filter(models.User.user_id == user.user_id).first()
@@ -151,5 +162,6 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
