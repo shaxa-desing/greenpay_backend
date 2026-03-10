@@ -6,7 +6,7 @@ import database, models, schemas, requests
 app = FastAPI(title="GreenPay API")
 models.Base.metadata.create_all(bind=database.engine)
 
-BOT_TOKEN = "8565818987:AAEciIAbwHVGjkuJ7TwwdCfKjKlXYj8annI"
+BOT_TOKEN = "8565818987:AAFtp_uIUnZOdeqLRjWP2E_2eObcEFLJ28o"
 
 @app.post("/update-card/{user_id}")
 def update_user_card(user_id: int, data: dict, db: Session = Depends(database.get_db)):
@@ -162,6 +162,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
