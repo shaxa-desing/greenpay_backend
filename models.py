@@ -6,8 +6,8 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(BigInteger, unique=True, index=True)
     full_name = Column(String)
-    username = Column(String, nullable=True)
     phone = Column(String, nullable=True)
+    card = Column(String, nullable=True) # SHU QATORNI QO'SHING
 
 class Tree(Base):
     __tablename__ = "trees"
@@ -19,3 +19,4 @@ class Tree(Base):
     longitude = Column(Float)
     photo = Column(String)
     status = Column(String, default="pending") # Tasdiqlash uchun
+
