@@ -33,6 +33,7 @@ def update_user_card(user_id: int, data: dict, db: Session = Depends(database.ge
 
 # main.py ichida create_user funksiyasi
 @app.post("/users/")
+# This line is failing because 'UserSchema' is unknown to the script here
 async def create_user(user: UserSchema, db: Session = Depends(get_db)):
     new_user = models.User(
         user_id=user.user_id,
@@ -171,6 +172,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
