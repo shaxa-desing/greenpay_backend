@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from database import SessionLocal # database.py faylingiz bor deb hisoblaymiz
 from sqlalchemy.orm import Session
-from .schemas import UserSchema  # Adjust the path based on your file structure
+from schemas import UserSchema  # Adjust the path based on your file structure
 import database, models, schemas, requests
 app = FastAPI(title="GreenPay API")
 models.Base.metadata.create_all(bind=database.engine)
@@ -172,6 +172,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
