@@ -2,13 +2,14 @@ from sqlalchemy import Column, Integer, String, Float, BigInteger
 from database import Base
 
 # models.py ichida
+# models.py
 class User(Base):
     __tablename__ = "users"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(BigInteger, unique=True)
+    full_name = Column(String)  # <-- Nomga e'tibor bering
+    phone = Column(String)
 
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(BigInteger, unique=True, index=True)
-    username = Column(String, nullable=True) # <-- SHU QATORNI QO'SHING
-    phone = Column(String, nullable=True)
 
 
 
@@ -22,6 +23,7 @@ class Tree(Base):
     longitude = Column(Float)
     photo = Column(String)
     status = Column(String, default="pending") # Tasdiqlash uchun
+
 
 
 
