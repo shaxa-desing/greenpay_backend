@@ -49,19 +49,19 @@ def get_users_list(search: str = None, db: Session = Depends(database.get_db)):
 
 @app.post("/trees/")
 def create_tree(tree: schemas.TreeCreate, db: Session = Depends(database.get_db)):
-    # models.Tree da user_name qatori borligiga ishonch hosil qiling
     new_tree = models.Tree(
         user_id=tree.user_id,
-        user_name=tree.user_name, # Shu joyi muhim
+        user_name=tree.user_name,
         tree_type=tree.tree_type,
         latitude=tree.latitude,
         longitude=tree.longitude,
         photo=tree.photo,
-        status="pending"
+        status="pending" # Bazadagi default qiymat bilan mos
     )
     db.add(new_tree)
     db.commit()
-    return {"message": "Success"}
+    db.refresh(new_tree) # Yaratilgan ob'ektni qaytarish uchun
+    return {"message": "Success", "id": new_tree.id}
 
 @app.get("/trees/")
 def get_trees(db: Session = Depends(database.get_db)):
@@ -160,6 +160,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
