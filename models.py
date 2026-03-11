@@ -20,7 +20,8 @@ class TreeCreate(BaseModel):
     latitude: float
     longitude: float
     photo: str # Bu yerda Telegram file_id saqlanadi
-    status = Column(String, default="pending") # Tasdiqlash uchun
+    status: str = "pending"
+
 
 
 
