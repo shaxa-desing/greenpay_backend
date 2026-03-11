@@ -19,21 +19,18 @@ def update_user_card(user_id: int, data: dict, db: Session = Depends(database.ge
     db.commit()
     return {"message": "Card updated successfully"}
 
+# main.py ichida create_user funksiyasi
 @app.post("/users/")
-def create_user(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
-    db_user = db.query(models.User).filter(models.User.user_id == user.user_id).first()
-    if db_user:
-        return db_user
+async def create_user(user: UserSchema, db: Session = Depends(get_db)):
     new_user = models.User(
-        user_id=user.user_id, 
-        full_name=user.user_name,
-        username=user.username,
+        user_id=user.user_id,
+        full_name=user.full_name, # <-- 'username' emas, 'full_name' bo'lishi kerak
         phone=user.phone
     )
     db.add(new_user)
     db.commit()
-    db.refresh(new_user)
-    return new_user
+    return {"status": "ok"}
+
 
 @app.get("/user/{user_id}")
 def get_user(user_id: int, db: Session = Depends(database.get_db)):
@@ -162,6 +159,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
