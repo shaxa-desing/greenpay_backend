@@ -5,9 +5,8 @@ from database import Base
 # models.py
 class User(Base):
     __tablename__ = "users"
-    id = Column(Integer, primary_key=True)
-    user_id = Column(BigInteger, unique=True)
-    full_name = Column(String)  # <-- Nomga e'tibor bering
+    user_id = Column(BigInteger, primary_key=True, index=True) # BigInteger bo'lishi shart!
+    full_name = Column(String)
     phone = Column(String)
 
 
@@ -23,6 +22,7 @@ class Tree(Base):
     longitude = Column(Float)
     photo = Column(String)
     status = Column(String, default="pending") # Tasdiqlash uchun
+
 
 
 
