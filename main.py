@@ -19,15 +19,13 @@ def get_db():
 
 # Foydalanuvchi yaratish funksiyasi
 # main.py
+# main.py ichida
 @app.post("/users/")
 async def create_user(user: schemas.UserSchema, db: Session = Depends(get_db)):
-    # Ismni qaysi maydondan olishni tekshiramiz
-    display_name = user.full_name or user.user_name or "Foydalanuvchi"
-    
     new_user = models.User(
         user_id=user.user_id,
-        full_name=display_name,
-        username=user.username,
+        full_name=user.user_name,
+        # username=user.username,  <-- BU QATORNI O'CHIRING YOKI COMMENTGA OLING
         phone=user.phone
     )
     db.add(new_user)
@@ -162,6 +160,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
