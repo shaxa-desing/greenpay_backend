@@ -1,13 +1,13 @@
 from sqlalchemy import Column, Integer, String, Float, BigInteger
 from database import Base
 
-# models.py ichida
-# models.py
 class User(Base):
     __tablename__ = "users"
-    user_id = Column(BigInteger, primary_key=True, index=True) # BigInteger bo'lishi shart!
+    user_id = Column(BigInteger, primary_key=True)
     full_name = Column(String)
-    phone = Column(String)
+    username = Column(String, nullable=True)  # <-- SHU QATORNI QO'SHING
+    phone = Column(String, nullable=True)
+    card = Column(String, nullable=True)
 
 
 
@@ -22,6 +22,7 @@ class Tree(Base):
     longitude = Column(Float)
     photo = Column(String)
     status = Column(String, default="pending") # Tasdiqlash uchun
+
 
 
 
