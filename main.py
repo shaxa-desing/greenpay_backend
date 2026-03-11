@@ -1,17 +1,15 @@
+# main.py ning import qismi
 from fastapi import FastAPI, Depends, HTTPException, Response
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
-from database import SessionLocal # database.py faylingiz bor deb hisoblaymiz
-from sqlalchemy.orm import Session
-from schemas import UserSchema  # Adjust the path based on your file structure
 import database, models, schemas, requests
+from database import SessionLocal
+
 app = FastAPI(title="GreenPay API")
 models.Base.metadata.create_all(bind=database.engine)
 
-BOT_TOKEN = "8565818987:AAFtp_uIUnZOdeqLRjWP2E_2eObcEFLJ28o"
+BOT_TOKEN = ""
 
-
-# Ushbu funksiyani qo'shing:
 def get_db():
     db = SessionLocal()
     try:
@@ -19,26 +17,14 @@ def get_db():
     finally:
         db.close()
 
-
-@app.post("/update-card/{user_id}")
-def update_user_card(user_id: int, data: dict, db: Session = Depends(database.get_db)):
-    user = db.query(models.User).filter(models.User.user_id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    user.card = data.get("card")
-    user.phone = data.get("phone") # Agar telefonni yangilamoqchi bo'lsangiz
-    db.commit()
-    return {"message": "Card updated successfully"}
-
-# main.py ichida create_user funksiyasi
+# Foydalanuvchi yaratish funksiyasi
 @app.post("/users/")
-# This line is failing because 'UserSchema' is unknown to the script here
-async def create_user(user: UserSchema, db: Session = Depends(get_db)):
+async def create_user(user: schemas.UserSchema, db: Session = Depends(get_db)):
     new_user = models.User(
         user_id=user.user_id,
-        full_name=user.full_name, # <-- 'username' emas, 'full_name' bo'lishi kerak
-        phone=user.phone
+        full_name=user.user_name,  # schemas'da user_name, modelda full_name bo'lsa shunday qilinadi
+        phone=user.phone,
+        username=user.username     # username ni ham qo'shib qo'yamiz
     )
     db.add(new_user)
     db.commit()
@@ -172,6 +158,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
