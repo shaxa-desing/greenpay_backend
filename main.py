@@ -1,15 +1,15 @@
 from fastapi import FastAPI, Depends, HTTPException, Response
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
+from database import SessionLocal # database.py faylingiz bor deb hisoblaymiz
+from sqlalchemy.orm import Session
+from .schemas import UserSchema  # Adjust the path based on your file structure
 import database, models, schemas, requests
-
 app = FastAPI(title="GreenPay API")
 models.Base.metadata.create_all(bind=database.engine)
 
 BOT_TOKEN = "8565818987:AAFtp_uIUnZOdeqLRjWP2E_2eObcEFLJ28o"
 
-from sqlalchemy.orm import Session
-from database import SessionLocal # database.py faylingiz bor deb hisoblaymiz
 
 # Ushbu funksiyani qo'shing:
 def get_db():
@@ -171,6 +171,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
