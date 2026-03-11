@@ -18,22 +18,20 @@ def get_db():
         db.close()
 
 # Foydalanuvchi yaratish funksiyasi
+# main.py
 @app.post("/users/")
 async def create_user(user: schemas.UserSchema, db: Session = Depends(get_db)):
-    # Ma'lumotlar bazasida model maydonlari (full_name) bilan 
-    # Schema maydonlari (user_name) mosligini tekshiring
+    # Ismni qaysi maydondan olishni tekshiramiz
+    display_name = user.full_name or user.user_name or "Foydalanuvchi"
+    
     new_user = models.User(
         user_id=user.user_id,
-        full_name=user.user_name, # <-- Agar schemas'da user_name bo'lsa
+        full_name=display_name,
         username=user.username,
         phone=user.phone
     )
     db.add(new_user)
-    try:
-        db.commit()
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=400, detail=str(e))
+    db.commit()
     return {"status": "ok"}
 
 
@@ -164,6 +162,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
