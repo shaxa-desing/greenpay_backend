@@ -1,3 +1,4 @@
+from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String, Float, BigInteger
 from database import Base
 
@@ -20,6 +21,7 @@ class TreeCreate(BaseModel):
     longitude: float
     photo: str # Bu yerda Telegram file_id saqlanadi
     status = Column(String, default="pending") # Tasdiqlash uchun
+
 
 
 
