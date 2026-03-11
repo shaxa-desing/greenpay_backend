@@ -56,7 +56,7 @@ def create_tree(tree: schemas.TreeCreate, db: Session = Depends(database.get_db)
         latitude=tree.latitude,
         longitude=tree.longitude,
         photo=tree.photo,
-        status="pending" # Bazadagi default qiymat bilan mos
+        status="pending"
     )
     db.add(new_tree)
     db.commit()
@@ -160,6 +160,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
