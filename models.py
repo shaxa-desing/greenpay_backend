@@ -5,9 +5,9 @@ class User(Base):
     __tablename__ = "users"
     user_id = Column(BigInteger, primary_key=True)
     full_name = Column(String)
-    username = Column(String, nullable=True)  # <-- SHU QATORNI QO'SHING
+    username = Column(String, nullable=True) # <-- Shu qatorni qo'shing
     phone = Column(String, nullable=True)
-    card = Column(String, nullable=True)
+    card = Column(String, nullable=True)     # <-- Karta uchun joy
 
 
 
@@ -22,6 +22,7 @@ class Tree(Base):
     longitude = Column(Float)
     photo = Column(String)
     status = Column(String, default="pending") # Tasdiqlash uchun
+
 
 
 
