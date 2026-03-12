@@ -1,6 +1,9 @@
 import sys
 import os
-import models  # Add this line
+import models
+import database
+# or if it is inside a package, use:
+# from your_package_name import database# Add this line
 # OR if you only need specific parts:
 # from your_package import models
 
@@ -182,6 +185,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
