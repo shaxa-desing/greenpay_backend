@@ -1,13 +1,9 @@
-# main.py ning import qismi
-# main.py ning eng yuqori qismi
 from fastapi import FastAPI, Depends, HTTPException, Response
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
-import database, models, schemas  # 'schemas' ni import qilganingizga ishonch hosil qiling
+import database, models, schemas  # Keep this
+# REMOVE THIS LINE: from schemas import CardUpdateSchema
 from database import SessionLocal
-
-# Agar CardUpdateSchema 'schemas.py' ichida bo'lsa:
-from schemas import CardUpdateSchema
 
 app = FastAPI(title="GreenPay API")
 models.Base.metadata.create_all(bind=database.engine)
@@ -179,6 +175,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
