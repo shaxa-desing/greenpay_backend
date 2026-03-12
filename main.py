@@ -1,9 +1,17 @@
+import sys
+import os
+
+# Papkani python path ga qo'shamiz
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 from fastapi import FastAPI, Depends, HTTPException, Response
-from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
-import database, models, schemas  # Keep this
-# main.py ichida
-from schemas import CardUpdateSchema # Agar schemas.py main.py bilan bitta papkada bo'lsa
+import database
+import models
+import schemas # 'import schemas' qoldiring
+
+# To'g'ridan-to'g'ri 'from schemas import ...' o'rniga shunday ishlating:
+# data: schemas.CardUpdateSchema
 # REMOVE THIS LINE: from schemas import CardUpdateSchema
 from database import SessionLocal
 
@@ -177,6 +185,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
