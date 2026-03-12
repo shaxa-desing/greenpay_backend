@@ -5,6 +5,14 @@ import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from fastapi import FastAPI, Depends, HTTPException, Response
+from fastapi.responses import HTMLResponse  # <--- SHU QATORNI QO'SHING
+
+app = FastAPI()
+
+# 107-qator atrofidagi kodingiz shunday bo'lishi kerak:
+@app.get("/", response_class=HTMLResponse)
+async def read_root():
+    # ...
 from sqlalchemy.orm import Session
 import database
 import models
@@ -185,6 +193,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
