@@ -23,12 +23,13 @@ def get_db():
 # main.py ichidagi create_user funksiyasini shunday qiling:
 @app.post("/users/")
 async def create_user(user: schemas.UserSchema, db: Session = Depends(get_db)):
+    # Modelga ma'lumotlarni to'g'ri bog'laymiz
     new_user = models.User(
         user_id=user.user_id,
-        full_name=user.full_name, # schema bilan bir xil nom
+        full_name=user.full_name or user.user_name, # Ikkalasidan birini oladi
         username=user.username,
         phone=user.phone,
-        card=None # Boshlang'ich holat
+        card=None 
     )
     db.add(new_user)
     db.commit()
@@ -176,6 +177,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
