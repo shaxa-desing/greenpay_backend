@@ -13,7 +13,7 @@ class User(Base):
 
 
 
-class TreeCreate(BaseModel):
+class Tree(Base):
     user_id: int
     user_name: str # Modelsda user_name bor
     tree_type: str
@@ -21,6 +21,7 @@ class TreeCreate(BaseModel):
     longitude: float
     photo: str # Bu yerda Telegram file_id saqlanadi
     status: str = "pending"
+
 
 
 
