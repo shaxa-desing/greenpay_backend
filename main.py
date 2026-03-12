@@ -20,13 +20,15 @@ def get_db():
 # Foydalanuvchi yaratish funksiyasi
 # main.py
 # main.py ichida
+# main.py ichidagi create_user funksiyasini shunday qiling:
 @app.post("/users/")
 async def create_user(user: schemas.UserSchema, db: Session = Depends(get_db)):
     new_user = models.User(
         user_id=user.user_id,
-        full_name=user.user_name,
-        # username=user.username,  <-- BU QATORNI O'CHIRING YOKI COMMENTGA OLING
-        phone=user.phone
+        full_name=user.full_name, # schema bilan bir xil nom
+        username=user.username,
+        phone=user.phone,
+        card=None # Boshlang'ich holat
     )
     db.add(new_user)
     db.commit()
@@ -49,9 +51,6 @@ def get_users_list(search: str = None, db: Session = Depends(database.get_db)):
 
 from pydantic import BaseModel
 
-class CardUpdateSchema(BaseModel):
-    card: str
-    phone: str
 
 @app.post("/update-card/{user_id}")
 def update_card(user_id: int, data: CardUpdateSchema, db: Session = Depends(database.get_db)):
@@ -177,6 +176,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
