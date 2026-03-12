@@ -9,6 +9,10 @@ class UserSchema(BaseModel):
     username: Optional[str] = None
     phone: Optional[str] = None
 
+class CardUpdateSchema(BaseModel):
+    card: str
+    phone: str
+
 class TreeCreate(BaseModel):
     user_id: int
     user_name: str
@@ -17,4 +21,5 @@ class TreeCreate(BaseModel):
     latitude: float
     longitude: float
     photo: str
+
 
