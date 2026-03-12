@@ -7,6 +7,7 @@ import models  # Add this line
 # Papkani python path ga qo'shamiz
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
+from . import database  # Or just 'import database' depending on your structure
 from fastapi import FastAPI, Depends, HTTPException, Response
 from fastapi.responses import HTMLResponse  # <--- SHU QATORNI QO'SHING
 from database import SessionLocal
@@ -181,6 +182,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
