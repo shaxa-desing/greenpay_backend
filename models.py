@@ -11,7 +11,9 @@ class User(Base):
     card = Column(String, nullable=True)     # <-- Karta uchun joy
 
 
-
+class CardUpdateSchema(BaseModel):
+    card: str
+    phone: str
 
 
 class Tree(Base): # Klass nomi aynan 'Tree' bo'lishi shart
@@ -23,6 +25,7 @@ class Tree(Base): # Klass nomi aynan 'Tree' bo'lishi shart
     latitude = Column(Float)
     longitude = Column(Float)
     photo_id = Column(String)
+
 
 
 
