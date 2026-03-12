@@ -13,14 +13,17 @@ class User(Base):
 
 
 
-class Tree(Base):
-    user_id: int
-    user_name: str # Modelsda user_name bor
-    tree_type: str
-    latitude: float
-    longitude: float
-    photo: str # Bu yerda Telegram file_id saqlanadi
-    status: str = "pending"
+
+class Tree(Base): # Klass nomi aynan 'Tree' bo'lishi shart
+    __tablename__ = "trees"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer)
+    tree_type = Column(String)
+    latitude = Column(Float)
+    longitude = Column(Float)
+    photo_id = Column(String)
+
 
 
 
