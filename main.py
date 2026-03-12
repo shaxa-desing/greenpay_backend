@@ -52,7 +52,7 @@ def get_users_list(search: str = None, db: Session = Depends(database.get_db)):
 
 
 @app.post("/update-card/{user_id}")
-def update_card(user_id: int, data: CardUpdateSchema, db: Session = Depends(database.get_db)):
+def update_card(user_id: int, data: schemas.CardUpdateSchema, db: Session = Depends(database.get_db)):
     user = db.query(models.User).filter(models.User.user_id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="Foydalanuvchi topilmadi")
@@ -175,6 +175,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
