@@ -2,6 +2,8 @@ from fastapi import FastAPI, Depends, HTTPException, Response
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 import database, models, schemas  # Keep this
+# main.py ichida
+from schemas import CardUpdateSchema # Agar schemas.py main.py bilan bitta papkada bo'lsa
 # REMOVE THIS LINE: from schemas import CardUpdateSchema
 from database import SessionLocal
 
@@ -175,6 +177,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
