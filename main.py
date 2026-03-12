@@ -47,6 +47,23 @@ def get_users_list(search: str = None, db: Session = Depends(database.get_db)):
         query = query.filter(models.User.full_name.contains(search))
     return query.all()
 
+from pydantic import BaseModel
+
+class CardUpdateSchema(BaseModel):
+    card: str
+    phone: str
+
+@app.post("/update-card/{user_id}")
+def update_card(user_id: int, data: CardUpdateSchema, db: Session = Depends(database.get_db)):
+    user = db.query(models.User).filter(models.User.user_id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Foydalanuvchi topilmadi")
+    
+    user.card = data.card
+    user.phone = data.phone
+    db.commit()
+    return {"status": "success"}
+
 @app.post("/trees/")
 def create_tree(tree: schemas.TreeCreate, db: Session = Depends(database.get_db)):
     new_tree = models.Tree(
@@ -160,6 +177,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
