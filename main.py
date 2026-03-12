@@ -2,6 +2,8 @@ import sys
 import os
 import models
 import database
+import sys
+print(sys.path)
 # OR if your project structure requires it:
 from greenpay_backend import database
 # or if it is inside a package, use:
@@ -187,6 +189,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
