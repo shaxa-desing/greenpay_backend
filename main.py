@@ -50,8 +50,6 @@ def get_users_list(search: str = None, db: Session = Depends(database.get_db)):
         query = query.filter(models.User.full_name.contains(search))
     return query.all()
 
-from pydantic import BaseModel
-
 
 @app.post("/update-card/{user_id}")
 def update_card(user_id: int, data: CardUpdateSchema, db: Session = Depends(database.get_db)):
@@ -177,6 +175,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
