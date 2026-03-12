@@ -1,5 +1,8 @@
 import sys
 import os
+import models  # Add this line
+# OR if you only need specific parts:
+# from your_package import models
 
 # Papkani python path ga qo'shamiz
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -178,6 +181,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
