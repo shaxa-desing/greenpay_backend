@@ -6,21 +6,6 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from fastapi import FastAPI, Depends, HTTPException, Response
 from fastapi.responses import HTMLResponse  # <--- SHU QATORNI QO'SHING
-
-app = FastAPI()
-
-# 107-qator atrofidagi kodingiz shunday bo'lishi kerak:
-@app.get("/", response_class=HTMLResponse)
-async def read_root():
-    # ...
-from sqlalchemy.orm import Session
-import database
-import models
-import schemas # 'import schemas' qoldiring
-
-# To'g'ridan-to'g'ri 'from schemas import ...' o'rniga shunday ishlating:
-# data: schemas.CardUpdateSchema
-# REMOVE THIS LINE: from schemas import CardUpdateSchema
 from database import SessionLocal
 
 app = FastAPI(title="GreenPay API")
@@ -193,6 +178,7 @@ def dashboard():
     </body>
     </html>
     """
+
 
 
 
