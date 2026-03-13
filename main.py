@@ -1,9 +1,7 @@
 import sys
 import os
 import models
-import database
 import sys
-from . import database
 import database
 # or
 from database import some_function
