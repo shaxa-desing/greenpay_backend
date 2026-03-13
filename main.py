@@ -3,18 +3,10 @@ import os
 import models
 import database
 import sys
-print(sys.path)
-# OR if your project structure requires it:
-from greenpay_backend import database
-# or if it is inside a package, use:
-# from your_package_name import database# Add this line
-# OR if you only need specific parts:
-# from your_package import models
+from . import database
 
 # Papkani python path ga qo'shamiz
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
-from . import database  # Or just 'import database' depending on your structure
 from fastapi import FastAPI, Depends, HTTPException, Response
 from fastapi.responses import HTMLResponse  # <--- SHU QATORNI QO'SHING
 from database import SessionLocal
