@@ -4,6 +4,9 @@ import models
 import database
 import sys
 from . import database
+import database
+# or
+from database import some_function
 
 # Papkani python path ga qo'shamiz
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
