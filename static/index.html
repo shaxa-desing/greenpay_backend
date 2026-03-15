@@ -27,21 +27,23 @@ button {
     <h1>🌳 GreenPay Dashboard</h1>
     <div class="grid" id="trees"></div>
     <script>
-        async function loadTrees() {
-            const res = await fetch('/trees/');
-            const data = await res.json();
-            const container = document.getElementById('trees');
-            data.forEach(t => {
-                container.innerHTML += `
-                    <div class="card">
-                        <h3>${t.tree_type}</h3>
-                        <p>👤 ${t.user_name} | 📱 ${t.phone}</p>
-                        <img src="/photo/${t.photo}" alt="tree">
-                        <a class="map-link" href="https://maps.google.com/?q=${t.latitude},${t.longitude}" target="_blank">📍 Xaritada ko'rish</a>
-                    </div>`;
-            });
-        }
-        loadTrees();
-    </script>
+    async function loadTrees() {
+        const res = await fetch('/trees/'); // Endi bu ishlaydi
+        const data = await res.json();
+        const container = document.getElementById('trees');
+        
+        container.innerHTML = ''; // Tozalash
+        data.forEach(t => {
+            container.innerHTML += `
+                <div class="card">
+                    <h3>${t.tree_type}</h3>
+                    <p>👤 ${t.user_name} | 💰 ${t.price} so'm</p>
+                    <p>Status: ${t.status}</p>
+                    <a class="map-link" href="https://www.google.com/maps?q=${t.latitude},${t.longitude}" target="_blank">📍 Xaritada ko'rish</a>
+                </div>`;
+        });
+    }
+    loadTrees();
+</script>
 </body>
 </html>
