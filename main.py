@@ -25,6 +25,10 @@ def get_db():
 
 
 # Foydalanuvchi mavjudligini tekshirish
+
+@app.get("/")
+async def root():
+    return {"status": "success", "message": "GreenPay API is running smoothly"}
 @app.get("/users/check/{user_id}")
 def check_user(user_id: int, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.user_id == user_id).first()
