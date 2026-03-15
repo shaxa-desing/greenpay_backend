@@ -1,13 +1,10 @@
-# schemas.py
 from pydantic import BaseModel
 from typing import Optional
 
-class UserSchema(BaseModel):
+class UserCreate(BaseModel):
     user_id: int
-    user_name: Optional[str] = None  # Majburiy emas qilib qo'yamiz
-    full_name: Optional[str] = None  # Botdan kelishi ehtimoli bo'lgan maydon
-    username: Optional[str] = None
-    phone: Optional[str] = None
+    full_name: str
+    phone: str
 
 class CardUpdateSchema(BaseModel):
     card: str
@@ -16,10 +13,9 @@ class CardUpdateSchema(BaseModel):
 class TreeCreate(BaseModel):
     user_id: int
     user_name: str
-    phone: Optional[str] = None
+    category: str
     tree_type: str
     latitude: float
     longitude: float
     photo: str
-
-
+    price: int
