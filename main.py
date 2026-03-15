@@ -64,6 +64,11 @@ def update_card(user_id: int, data: schemas.CardUpdateSchema, db: Session = Depe
     db.commit()
     return {"status": "success"}
 
+@app.get("/trees/")
+def get_all_trees(db: Session = Depends(get_db)):
+    trees = db.query(models.Tree).all()
+    return trees
+
 @app.post("/trees/")
 def create_tree(tree: schemas.TreeCreate, db: Session = Depends(get_db)):
     new_tree = models.Tree(
