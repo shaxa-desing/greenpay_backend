@@ -47,6 +47,11 @@ async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db.commit()
     return {"status": "ok"}
 
+@app.get("/users/")
+def get_all_users(db: Session = Depends(get_db)):
+    users = db.query(models.User).all()
+    return users
+
 @app.get("/user/{user_id}")
 def get_user(user_id: int, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.user_id == user_id).first()
