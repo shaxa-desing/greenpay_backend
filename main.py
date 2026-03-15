@@ -13,6 +13,10 @@ import schemas
 import database
 
 app = FastAPI(title="GreenPay API")
+
+# Statik fayllarni serverga ulash (HTML, CSS, JS shu yerda bo'ladi)
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 models.Base.metadata.create_all(bind=database.engine)
 
 BOT_TOKEN = "8565818987:AAFtp_uIUnZOdeqLRjWP2E_2eObcEFLJ28o" 
