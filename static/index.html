@@ -25,24 +25,52 @@ button {
 </head>
 <body>
     <h1>🌳 GreenPay Dashboard</h1>
-    <div class="grid" id="trees"></div>
-    <script>
+<h2>👥 Foydalanuvchilar va Balans</h2>
+<table border="1" id="users-table">
+    <thead>
+        <tr><th>Ism</th><th>Telefon</th><th>Karta</th><th>Balans (so'm)</th></tr>
+    </thead>
+    <tbody id="users-body"></tbody>
+</table>
+
+<hr>
+
+<h2>🌳 Daraxtlar</h2>
+<div class="grid" id="trees"></div>
+
+<script>
+    // Foydalanuvchilarni yuklash
+    async function loadUsers() {
+        const res = await fetch('/users/');
+        const data = await res.json();
+        const tbody = document.getElementById('users-body');
+        data.forEach(u => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${u.full_name}</td>
+                    <td>${u.phone}</td>
+                    <td>${u.card || 'Yo\'q'}</td>
+                    <td><strong>${u.balance}</strong></td>
+                </tr>`;
+        });
+    }
+
+    // Daraxtlarni yuklash
     async function loadTrees() {
-        const res = await fetch('/trees/'); // Endi bu ishlaydi
+        const res = await fetch('/trees/');
         const data = await res.json();
         const container = document.getElementById('trees');
-        
-        container.innerHTML = ''; // Tozalash
         data.forEach(t => {
             container.innerHTML += `
                 <div class="card">
                     <h3>${t.tree_type}</h3>
                     <p>👤 ${t.user_name} | 💰 ${t.price} so'm</p>
-                    <p>Status: ${t.status}</p>
-                    <a class="map-link" href="https://www.google.com/maps?q=${t.latitude},${t.longitude}" target="_blank">📍 Xaritada ko'rish</a>
+                    <p>Status: <span style="color:${t.status=='approved'?'green':'orange'}">${t.status}</span></p>
                 </div>`;
         });
     }
+
+    loadUsers();
     loadTrees();
 </script>
 </body>
