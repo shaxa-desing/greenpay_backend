@@ -1,37 +1,24 @@
-from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String, Float, BigInteger
 from database import Base
 
 class User(Base):
     __tablename__ = "users"
-    user_id = Column(BigInteger, primary_key=True)
-    full_name = Column(String)
-    username = Column(String, nullable=True) # <-- Shu qatorni qo'shing
-    phone = Column(String, nullable=True)
-    card = Column(String, nullable=True)     # <-- Karta uchun joy
-
-
-class CardUpdateSchema(BaseModel):
-    card: str
-    phone: str
-
-
-class Tree(Base): # Klass nomi aynan 'Tree' bo'lishi shart
-    __tablename__ = "trees"
-
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer)
-    tree_type = Column(String)
+    user_id = Column(BigInteger, unique=True, index=True)
+    full_name = Column(String)
+    phone = Column(String)
+    card = Column(String, nullable=True)
+    balance = Column(Integer, default=0)
+
+class Tree(Base):
+    __tablename__ = "trees"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(BigInteger)
+    user_name = Column(String)
+    category = Column(String) # Mevali yoki Manzarali
+    tree_type = Column(String) # Olma, Gilos va h.k.
     latitude = Column(Float)
     longitude = Column(Float)
-    photo_id = Column(String)
-
-
-
-
-
-
-
-
-
-
+    photo = Column(String)
+    status = Column(String, default="pending") # pending, approved, rejected
+    price = Column(Integer, default=0)
