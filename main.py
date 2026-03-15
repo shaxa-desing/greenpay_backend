@@ -1,9 +1,10 @@
 import os
 import sys
 import requests
-from fastapi import FastAPI, Depends, HTTPException, Response
-from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
+from fastapi import FastAPI, Depends, HTTPException, Response
+from fastapi.responses import HTMLResponse, FileResponse # FileResponse qo'shildi
+from fastapi.staticfiles import StaticFiles # StaticFiles qo'shildi
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
