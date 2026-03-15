@@ -31,10 +31,9 @@ def get_db():
 
 # Foydalanuvchi mavjudligini tekshirish
 
-@app.get("/", response_class=HTMLResponse)
+@app.get("/", response_class=FileResponse)
 async def read_index():
-    # static papkasi ichidagi index.html faylini yuboradi
-    return FileResponse("static/index.html")
+    return "static/index.html"
 
 @app.post("/users/")
 async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
