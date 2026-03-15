@@ -23,6 +23,7 @@ def get_db():
     finally:
         db.close()
 
+
 # Foydalanuvchi mavjudligini tekshirish
 @app.get("/users/check/{user_id}")
 def check_user(user_id: int, db: Session = Depends(get_db)):
